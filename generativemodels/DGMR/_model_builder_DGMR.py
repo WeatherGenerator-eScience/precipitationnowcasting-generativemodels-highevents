@@ -75,21 +75,29 @@ def crop_center(img,cropx=350,cropy=384):
 
 # 2D convolution with spectral normalisation  using code from deepmind
 class SNConv2D:
-  def __init__(self, output_channels, kernel_size, stride=1, rate=1,
-               padding='SAME', sn_eps=0.0001, use_bias=True):
-    # constructer
-    self._output_channels = output_channels
-    self._kernel_size = kernel_size
-    self._stride = stride
-    self._rate = rate
-    self._padding = padding
-    self._sn_eps = sn_eps
-    self._initializer = tf.orthogonal_initializer
-    self._use_bias = use_bias
+    def __init__(
+        self,
+        output_channels,
+        kernel_size,
+        stride=1,
+        rate=1,
+        padding="SAME",
+        sn_eps=0.0001,
+        use_bias=True,
+    ):
+        # constructer
+        self._output_channels = output_channels
+        self._kernel_size = kernel_size
+        self._stride = stride
+        self._rate = rate
+        self._padding = padding
+        self._sn_eps = sn_eps
+        self._initializer = tf.keras.initializers.orthogonal
+        self._use_bias = use_bias
 
-  def __call__(self, tensor):
-    SNConv2D = snt.wrap_with_spectral_norm(snt.Conv2D, {'eps': 1e-4})
-    return SNConv2D
+    def __call__(self, tensor):
+        SNConv2D = snt.wrap_with_spectral_norm(snt.Conv2D, {"eps": 1e-4})
+        return SNConv2D
     
 # latent conditioning stack for sampler using code from deepmind
 class LatentCondStack(object):
@@ -386,8 +394,8 @@ class Sampler(object):
 
     return tf.stack(hs, axis=1)
  
- # convolutional residual block using code from deepmind
- class CBlock(object):
+# convolutional residual block using code from deepmind
+class CBlock(object):
   def __init__(self, output_channels, kernel_size=3, downsample=True,
                pre_activation=True, conv=SNConv2D,
                pooling=tf.keras.layers.AveragePooling2D, activation=tf.nn.relu):
@@ -535,9 +543,9 @@ def generator_DGMR(x, rnn_type='GRU', relu_alpha=0.2, x_length=6, y_length=1, no
     # Add padding to make square image
     x = tf.keras.layers.ZeroPadding3D(padding=(0,0,34))(x)
     # apply stacks
-    init_states = ConditioningStack(x)
+    init_states = ConditioningStack()
     # create output using sampler
-    output = Sampler(lead_time, time_delta, initial_states)
+    output = Sampler(lead_time, time_delta)
     
     output = tf.keras.layers.Cropping2D((0,17))(output)
 
