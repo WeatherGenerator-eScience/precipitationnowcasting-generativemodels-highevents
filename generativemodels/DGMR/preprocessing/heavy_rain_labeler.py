@@ -39,7 +39,8 @@ files = sorted([name for path, subdirs, files in os.walk(root) for name in files
 
 cluttermask = ~np.load('cluttermask.npy')
 
-path = config_DGMR.dir_rtcor + '2019/{}201901010000.h5'.format(config_DGMR.prefix_rtcor)
+# Some magic going on here, using a random other date that I do have.
+path = config_DGMR.dir_rtcor + "2025/{}202504180805.h5".format(config_DGMR.prefix_rtcor)
 with h5py.File(path, 'r') as f:
     rain = f['image1']['image_data'][:]
     mask = (rain == 65535)

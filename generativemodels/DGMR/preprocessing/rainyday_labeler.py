@@ -5,7 +5,7 @@ from os import listdir
 from os.path import isfile, join
 from tqdm import tqdm
 import h5py
-import config_DGMR
+import config_DGMR  # Note: had to copy from parent dir into this one
 
 import sys
 
@@ -25,7 +25,7 @@ label_dir = config_DGMR.dir_labels
 
 root = radar_dir + year
 files = sorted([name for path, subdirs, files in os.walk(root) for name in files])
-files = files[1:]
+files = files[1:]  # TODO: why this needed?
 
 cluttermask = ~np.load('cluttermask.npy')
 

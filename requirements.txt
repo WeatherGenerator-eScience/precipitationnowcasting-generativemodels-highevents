@@ -10,4 +10,3 @@ tqdm
 pyproj
 geos
 basemap
-proj
